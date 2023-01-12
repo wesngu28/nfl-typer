@@ -1,8 +1,7 @@
 <script setup lang="ts">
 
-import { getRosters } from '../utils/dbFiller';
 import Menubox from './components/MenuBox.vue'
-import { store } from "./stores/counter"
+import { store } from "./components/states"
 
 const teams = [
   { id: 1, name: 'NFL' },
@@ -27,7 +26,7 @@ const positions = [
 </script>
 
 <template>
-  <div class="flex flex-col items-center w-screen h-screen overflow-hidden">
+  <div class="flex flex-col items-center w-screen h-screen overflow-hidden bg-[#181818] text-white">
     <header class="flex flex-initial">Ok</header>
     <div class="flex flex-auto items-center justify-center flex-col">
 
@@ -38,12 +37,7 @@ const positions = [
           <Menubox :selection="positions" default="Positions"/>
         </ul>
         <p class="mt-11">Current Challenge: {{ store.team }} {{ store.position }}</p>
-        <input class="mt-2 text-3xl m-auto border-gray-500 p-4 border-spacing-1 border-2 bg-transparent"
-          placeholder="Tom Brady">
-        <ul class="mt-11 flex w-full justify-around">
-          <li class="mx-4">60s</li>
-          <li class="mx-4">0</li>
-        </ul>
+        <Input />
       </div>
 
 

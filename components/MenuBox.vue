@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
-import { store } from "../stores/counter"
+import { store } from "./states"
 import {
   Menu, MenuButton, MenuItems,
   Combobox,
