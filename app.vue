@@ -32,7 +32,6 @@ const positions = [
 
       <div>
         <ul class="flex w-full justify-evenly">
-          <!-- <button v-on:click="getRosters">Test</button> -->
           <Menubox :selection="teams" default="Teams"/>
           <Menubox :selection="positions" default="Positions"/>
         </ul>
