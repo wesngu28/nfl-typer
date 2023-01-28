@@ -1,18 +1,18 @@
 import { createClient } from "@supabase/supabase-js";
+import { writeFileSync } from "fs"
 
 // ran 1/26/2023, may need to run again at end of season if that matters
-
+// using supabase for now but there is a chance i switch to local
 export async function getRosters(): Promise<void> {
-  // const supabase = createClient('https://qapykcdprhrersuvogia.supabase.co', '')
 
-  // Run 32 times for all NFL teams
+  // const supabase = createClient('https://qapykcdprhrersuvogia.supabase.co', '')
   for (let i = 33; i <= 34; i++) {
     const teamRes = await fetch(
       `https://site.api.espn.com/apis/site/v2/sports/football/nfl/teams/${i}/roster`
     );
     const teamJson: ESPNResponse = await teamRes.json();
-    // Run for offense, defense, special team
-    for (let j = 0; j <= 2; j++)
+    // const players: Player[] = []
+    for (let j = 0; j <= 2; j++) {
       for (const player of teamJson.athletes[j].items) {
         const athlete: Player = {
           firstName: player.firstName,
@@ -29,17 +29,20 @@ export async function getRosters(): Promise<void> {
           position: player.position.name,
           image: player.headshot?.href,
         };
+        // players.push(athlete)
         const { error } = await supabase
           .from("Player")
           .upsert({...athlete}, {ignoreDuplicates: true});
       }
+    }
+    // writeFileSync("players.json", JSON.stringify(players))
   }
   return;
 }
 
 getRosters();
 
-interface Player {
+export interface Player {
   firstName: string;
   lastName: string;
   fullName: string;
