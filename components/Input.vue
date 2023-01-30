@@ -1,18 +1,18 @@
 <script setup lang="ts">
+import { usePosition } from '~~/stores/usePosition';
+import { useTeam } from '~~/stores/useTeam';
 import { supabase } from '../utils/supabase'
-import { store } from "./states"
 
+const teamStore = useTeam()
+const positionStore = usePosition()
 const state = reactive({ count: 0 })
 const timer = reactive({ count: 60 })
-
 function increment() {
   state.count++
   message.text = ''
 }
 
-const message = reactive({
-  text: '',
-})
+const message = reactive({text: ''})
 
 let players: string[] = []
 
@@ -27,15 +27,8 @@ let startTimer = false
 watch(() => message.text, async (newValue) => {
   if (!startTimer && newValue) {
     startTimer = true
-    const query = supabase.from('Player').select('fullName')
-    if (store.team !== 'NFL') {
-      query.eq('team', store.team)
-    }
-    if (store.position !== 'Players') {
-      query.eq('position', store.position)
-    }
-    const { data } = await query
-    players.push(...data!.map(player => player.fullName))
+    await getValidPlayers()
+    message.text = ''
     setInterval(() => {
       if (timer.count === 0) {
         startTimer = false
@@ -53,16 +46,29 @@ watch(() => checkString.value, (newValue) => {
     increment()
   }
 })
+
+async function getValidPlayers() {
+  const query = supabase.from('Player').select('fullName')
+    if (teamStore.team !== 'NFL') {
+      query.eq('team', teamStore.team)
+    }
+    if (positionStore.position !== 'Players') {
+      query.eq('position', positionStore.position)
+    }
+    const { data } = await query
+    players.push(...data!.map(player => player.fullName))
+}
 </script>
 
 <template>
   <input v-model="message.text"
     class="mt-2 text-3xl m-auto border-gray-500 p-4 border-spacing-1 border-2 bg-transparent" placeholder="Tom Brady">
+  <p></p>
   <ul class="mt-11 flex w-full justify-around items-center">
     <div>
       <p>Time Left</p>
       <li class="mx-4">{{ formattedTime }}</li>
     </div>
-    <li class="mx-4">{{ state.count }}</li>
+    <li class="mx-4">{{ state.count }} {{ players.length > 0 ? `/ ${players.length}` : null }}</li>
   </ul>
 </template>
