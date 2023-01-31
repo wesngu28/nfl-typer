@@ -1,5 +1,5 @@
 export const usePosition = defineStore('position', () => {
-  let position = ref('Players')
+  let position = ref('Player')
   function setPosition(positionName: string) {
     position.value = positionName
   }

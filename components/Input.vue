@@ -52,7 +52,7 @@ async function getValidPlayers() {
     if (teamStore.team !== 'NFL') {
       query.eq('team', teamStore.team)
     }
-    if (positionStore.position !== 'Players') {
+    if (positionStore.position !== 'Player') {
       query.eq('position', positionStore.position)
     }
     const { data } = await query
