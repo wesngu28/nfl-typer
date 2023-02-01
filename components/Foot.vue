@@ -1,5 +1,5 @@
 <template>
-  <footer class="flex flex-initial h-16 items-center pb-8">
+  <footer class="flex h-16 flex-initial items-center pb-8">
     <p>Wesley Nguyen 2022</p>
   </footer>
 </template>
