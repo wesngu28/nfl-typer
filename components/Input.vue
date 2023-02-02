@@ -2,28 +2,18 @@
 import { usePosition } from '~~/stores/usePosition'
 import { useTeam } from '~~/stores/useTeam'
 
-const client = useSupabaseClient()
+const client = useSupabaseClient<{id: string, created_at: string, scores: number}>()
+const user = useSupabaseUser()
 const teamStore = useTeam()
 const positionStore = usePosition()
-const state = reactive({ count: 0 })
-const timer = reactive({ count: 60 })
+const board = reactive({ score: 0, timer: 60 })
 function increment() {
-  state.count++
+  board.score++
   message.text = ''
 }
 
 const message = reactive({ text: '' })
-
 let players: string[] = []
-
-let formattedTime = computed(() => {
-  let minutes = Math.floor(timer.count / 60)
-  let seconds = timer.count % 60
-  return `${minutes < 10 ? '0' + minutes : minutes}:${
-    seconds < 10 ? '0' + seconds : seconds
-  }`
-})
-
 let startTimer = false
 
 watch(
@@ -31,16 +21,24 @@ watch(
   async (newValue) => {
     if (!startTimer && newValue) {
       startTimer = true
+      if(newValue === '') return
       await getValidPlayers()
       message.text = ''
-      setInterval(() => {
-        if (timer.count === 0) {
+      const countdown = setInterval(async () => {
+        if (board.timer === 0) {
           startTimer = false
           message.text = ''
-          timer.count = 60
+          board.timer = 60
+          board.score = 0
+          if (user.value) {
+            console.log('user is in andcount is done')
+            const { error } = await client.from('Scores').insert({id: user.value.id, scores: board.score})
+            console.log(error)
+          } else console.log('no user')
+          clearInterval(countdown)
           return
         }
-        timer.count--
+        board.timer--
       }, 1000)
     }
   }
@@ -64,28 +62,22 @@ async function getValidPlayers() {
     query.eq('position', positionStore.position)
   }
   const { data } = await query
-  players.push(...data!.map((player) => player.fullName))
+  players = data!.map((player) => player.fullName)
 }
 </script>
 
 <template>
-  <ul class="mb-4 flex w-full items-center justify-around">
-    <div class="text-center">
-      <p class="text-sm">Time Left</p>
-      <li class="mx-4 text-2xl font-bold">{{ formattedTime }}</li>
-    </div>
-    <div class="text-center">
-      <p class="text-sm">Score</p>
-      <li class="mx-4 text-2xl font-bold">
-        {{ state.count }} {{ players.length > 0 ? `/ ${players.length}` : null }}
-      </li>
-    </div>
-  </ul>
+  <Scoreboard
+    :score="board.score"
+    :timer="board.timer"
+    :playerLength="players.length"
+  />
   <input
     v-model="message.text"
     class="m-auto mt-2 mb-11 border-spacing-1 border-2 border-gray-500 bg-transparent p-4 text-3xl"
     :placeholder="`Type as many ${teamStore.team } ${ positionStore.position }s as you can in 60s`"
   />
+  <button>Start</button>
 </template>
 
 <style>
