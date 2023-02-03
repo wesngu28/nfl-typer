@@ -29,8 +29,8 @@ async function handleLogin() {
     </p>
     <div class="flex gap-4 relative">
       <p>Your Scores</p>
-      <button v-if="user" v-on:click="showLoginForm" class="mr-4">Log Out</button>
-      <button v-else v-on:click="showLoginForm" class="mr-4">Sign In</button>
+      <button v-if="user" @click="showLoginForm" class="mr-4">Log Out</button>
+      <button v-else @click="showLoginForm" class="mr-4">Sign In</button>
       <form class="bg-gray-500 form absolute hidden top-10 right-7" @submit.prevent="handleLogin">
         <input class="p-2 bg-gray-500 mb-2" placeholder="Email" v-model="email" />
         <input type="submit" class="text-sm m-1 p-2 bg-green-700 text-white font-bold rounded-md"

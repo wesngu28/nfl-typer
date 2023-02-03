@@ -1,83 +1,72 @@
 <script setup lang="ts">
-import { usePosition } from '~~/stores/usePosition'
-import { useTeam } from '~~/stores/useTeam'
+import { useDropdown } from '~~/stores/useDropdown'
+import { useGame } from '~~/stores/useGame';
 
-const client = useSupabaseClient<{id: string, created_at: string, scores: number}>()
+const client = useSupabaseClient<{ id: string, created_at: string, scores: number }>()
 const user = useSupabaseUser()
-const teamStore = useTeam()
-const positionStore = usePosition()
-const board = reactive({ score: 0, timer: 60 })
+const dropdownStore = useDropdown()
+const gameStore = useGame()
 function increment() {
-  board.score++
+  gameStore.score = gameStore.score + 1
+  enteredPlayers.push(message.text)
   message.text = ''
 }
 
 const message = reactive({ text: '' })
-let players: string[] = []
-let startTimer = false
+let players: { team: string, position: string, college: string, arr: string[] } = reactive({ team: dropdownStore.team, position: dropdownStore.position, college: dropdownStore.college, arr: [] })
+let activeGame = ref(false)
+let initialLoad = ref(true)
+let enteredPlayers: string[] = []
 
-watch(
-  () => message.text,
-  async (newValue) => {
-    if (!startTimer && newValue) {
-      startTimer = true
-      if(newValue === '') return
-      await getValidPlayers()
+function startGame() {
+  gameStore.score = 0
+  activeGame.value = true
+  const countdown = setInterval(async () => {
+    if (gameStore.timer === 0) {
+      initialLoad.value = false
       message.text = ''
-      const countdown = setInterval(async () => {
-        if (board.timer === 0) {
-          startTimer = false
-          message.text = ''
-          board.timer = 60
-          board.score = 0
-          if (user.value) {
-            console.log('user is in andcount is done')
-            const { error } = await client.from('Scores').insert({id: user.value.id, scores: board.score})
-            console.log(error)
-          } else console.log('no user')
-          clearInterval(countdown)
-          return
-        }
-        board.timer--
-      }, 1000)
+      gameStore.timer = 60
+      const gameDescriptor = `${dropdownStore.team}${dropdownStore.position}${dropdownStore.college}`
+      if (user.value) { await client.from('Scores').insert({ id: user.value.id, scores: gameStore.score, game_detail: gameDescriptor }) }
+      clearInterval(countdown)
+      activeGame.value = false
+      enteredPlayers = []
+      return
     }
-  }
-)
-let checkString = computed(() => players.includes(message.text))
-watch(
-  () => checkString.value,
-  (newValue) => {
-    if (newValue) {
-      increment()
-    }
-  }
-)
+    gameStore.timer--
+  }, 1000)
+}
+
+let checkString = computed(() => players.arr.includes(message.text))
+watch(() => checkString.value, (newValue) => { if (activeGame && newValue && !enteredPlayers.includes(message.text)) increment() })
+watch(() => dropdownStore.team, (team) => { getValidPlayers() })
+watch(() => dropdownStore.position, (pos) => { getValidPlayers() })
+watch(() => dropdownStore.college, (college) => { getValidPlayers() })
 
 async function getValidPlayers() {
+  if (players.arr.length > 0 && players.team === dropdownStore.team && players.position === dropdownStore.position && players.college === dropdownStore.college) return
   const query = client.from('Player').select('fullName')
-  if (teamStore.team !== 'NFL') {
-    query.eq('team', teamStore.team)
-  }
-  if (positionStore.position !== 'Player') {
-    query.eq('position', positionStore.position)
-  }
+  if (dropdownStore.team !== 'NFL') query.eq('team', dropdownStore.team)
+  if (dropdownStore.position !== 'Player') query.eq('position', dropdownStore.position)
+  if (dropdownStore.college !== 'All') query.eq('college', dropdownStore.college)
   const { data } = await query
-  players = data!.map((player) => player.fullName)
+  players.team = dropdownStore.team
+  players.position = dropdownStore.position
+  players.college = dropdownStore.college
+  players.arr = data!.map((player) => player.fullName)
+  gameStore.playerLength = players.arr.length
 }
 </script>
 
 <template>
-  <Scoreboard
-    :score="board.score"
-    :timer="board.timer"
-    :playerLength="players.length"
-  />
-  <input
-    v-model="message.text"
-    class="m-auto mt-2 mb-11 border-spacing-1 border-2 border-gray-500 bg-transparent p-4 text-3xl"
-    :placeholder="`Type as many ${teamStore.team } ${ positionStore.position }s as you can in 60s`"
-  />
-  <button>Start</button>
+  <div class="flex flex-col mb-11">
+    <input @click="getValidPlayers" v-model="message.text"
+      class="m-auto mt-2 mb-4 border-spacing-1 border-2 border-gray-500 bg-transparent p-4 text-3xl"
+      :placeholder="`${dropdownStore.team} ${dropdownStore.position}s from ${dropdownStore.college} in 60s`" />
+    <button :disabled="activeGame" @click="startGame" @mouseenter="getValidPlayers"
+      class="rounded-md bg-gray-100 disabled:opacity-25 bg-opacity-20 px-4 py-2 m-auto text-white hover:bg-opacity-30">Start</button>
+    <Paginate v-if="!activeGame && !initialLoad" :players="players.arr"/>
+  </div>
 </template>
 
 <style>

@@ -10,8 +10,6 @@ const props = defineProps<{
   selection: string[]
 }>()
 
-console.log(props.selection)
-
 const message = reactive({ text: '' })
 
 let qualified = computed(() => {
