@@ -3,12 +3,9 @@ export const useGame = defineStore('game', () => {
   let score = ref(0)
   let playerLength = ref(0)
   let active = ref(false)
-  function setGame(time: number, points: number, len: number, status: boolean) {
-    timer.value = time
-    score.value = points
-    playerLength.value = len
-    active.value = status
-  }
+  let postGame = ref(false)
+  let players = ref([] as string[])
+  let entered = ref([] as string[])
 
-  return { timer, score, playerLength, active, setGame }
+  return { timer, score, playerLength, active, postGame, players, entered }
 })
