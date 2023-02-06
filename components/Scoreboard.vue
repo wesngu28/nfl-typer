@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { useGame } from '~~/stores/useGame';
+import { useDropdown } from '~~/stores/useDropdown'
+import { useGame } from '~~/stores/useGame'
 
 const gameStore = useGame()
+const dropdownStore = useDropdown()
 let formattedTime = computed(() => {
   let minutes = Math.floor(gameStore.timer / 60)
   let seconds = gameStore.timer % 60
@@ -20,7 +22,16 @@ let formattedTime = computed(() => {
     <div class="text-center">
       <p class="text-sm">Score</p>
       <li class="mx-4 text-2xl font-bold">
-        {{ gameStore.score }} {{ gameStore.playerLength > 0 ? `/ ${gameStore.playerLength}` : null }}
+        {{ gameStore.score }}
+        {{
+          gameStore.playerLength > 0
+            ? `/ ${gameStore.playerLength}`
+            : dropdownStore.college !== 'All' &&
+              dropdownStore.position !== 'Player' &&
+              dropdownStore.team !== 'NFL'
+            ? '/ 0 '
+            : '/ 2512 '
+        }}
       </li>
     </div>
   </ul>

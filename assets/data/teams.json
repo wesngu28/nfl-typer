@@ -1,6 +1,9 @@
 [
+  "NFL",
   "Atlanta Falcons",
+  "Baltimore Ravens",
   "Buffalo Bills",
+  "Carolina Panthers",
   "Chicago Bears",
   "Cincinnati Bengals",
   "Cleveland Browns",
@@ -8,8 +11,9 @@
   "Denver Broncos",
   "Detroit Lions",
   "Green Bay Packers",
-  "Tennessee Titans",
+  "Houston Texans",
   "Indianapolis Colts",
+  "Jacksonville Jaguars",
   "Kansas City Chiefs",
   "Las Vegas Raiders",
   "Los Angeles Rams",
@@ -26,11 +30,6 @@
   "San Francisco 49ers",
   "Seattle Seahawks",
   "Tampa Bay Buccaneers",
-  "Washington Commanders",
-  "Carolina Panthers",
-  "Jacksonville Jaguars",
-  "Afc",
-  "Nfc",
-  "Baltimore Ravens",
-  "Houston Texans"
+  "Tennessee Titans",
+  "Washington Commanders"
 ]
