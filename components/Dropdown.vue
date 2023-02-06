@@ -68,8 +68,7 @@ const innerDropdown = (str: string) => {
       />
       <p
         @click="innerDropdown(teampos)"
-        v-for="teampos in qualified"
-        :key="teampos"
+        v-for="teampos in qualified" :key="teampos"
         class="my-2 w-full p-2 hover:bg-slate-200"
       >
         {{ teampos }}
