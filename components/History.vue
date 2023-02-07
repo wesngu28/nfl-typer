@@ -27,7 +27,7 @@ const { data: scores, refresh: refreshScores } = await useAsyncData(
     if (data && data[0]) {
       const dataIter: number[] = data!.map((d) => d.scores)
       const latest = dataIter[dataIter.length - 1]
-      const highest = dataIter.sort((a, b) => a - b)[0]
+      const highest = dataIter.sort((a, b) => b - a)[0]
       const average =
         dataIter!.reduce((acc, curr) => acc + curr, 0) / dataIter.length
       return { latest: latest, highest: highest, average: average }
@@ -60,10 +60,10 @@ onUnmounted(() => client.removeChannel(new_insert))
   </div>
   <div class="flex justify-between">
     <p v-if="scores">
-      Average Score with this Combination: {{ scores.highest }}
+      Average Score with this Combination: {{ scores.average }}
     </p>
   </div>
   <div class="flex justify-between">
-    <p v-if="scores">High Score with this Combination: {{ scores.average }}</p>
+    <p v-if="scores">High Score with this Combination: {{ scores.highest }}</p>
   </div>
 </template>

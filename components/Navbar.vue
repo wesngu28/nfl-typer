@@ -22,8 +22,10 @@ async function handleLogin() {
       }
     })
     toast.value!.classList.add('opacity-100')
+    toast.value!.classList.remove('opacity-0')
     setTimeout(() => {
         toast.value!.classList.remove('opacity-100')
+        toast.value!.classList.add('opacity-0')
 	  }, 2500);
     setTimeout(() => form.value!.toggleAttribute("disabled"), 60000)
   }

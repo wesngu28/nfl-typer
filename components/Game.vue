@@ -23,7 +23,10 @@ const gameStore = useGame()
         <Input />
       </div>
       <div class="flex flex-col items-center" v-if="gameStore.postGame">
-        <button @click="() => { gameStore.postGame = false }"
+        <button @click="() => {
+            gameStore.postGame = false
+            gameStore.score = 0
+          }"
           class="mb-8 rounded-md bg-gray-600 bg-opacity-20 px-4 py-2 text-white hover:bg-opacity-30"
         >
           New Game
