@@ -10,7 +10,7 @@ const gameStore = useGame()
 
 <template>
   <div class="flex flex-auto flex-col items-center justify-center">
-    <img class="mb-12 mt-4" src="NFL.png" width="150" height="150" />
+    <img class="mb-12 mt-4" src="/NFL.png" width="150" height="150" />
     <div>
       <div v-if="!gameStore.postGame">
         <Scoreboard />

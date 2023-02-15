@@ -18,7 +18,7 @@ async function handleLogin() {
     form.value!.toggleAttribute("disabled")
     await client.auth.signInWithOtp({
       email: email.value, options: {
-        emailRedirectTo: 'http://localhost:3000'
+        emailRedirectTo: 'https://nfltyper.vercel.app'
       }
     })
     toast.value!.classList.add('opacity-100')
@@ -35,7 +35,7 @@ async function handleLogin() {
 <template>
   <header class="flex h-16 w-full flex-initial items-center justify-between pt-8">
     <p class="ml-8 flex items-center">
-      <img src="NFL.svg" width="50" height="50" /> NFL Typer
+      <img src="/NFL.svg" width="50" height="50" /> NFL Typer
     </p>
     <div class="flex gap-4 relative">
       <button class="rounded-md bg-gray-600 bg-opacity-20 px-4 py-2 text-white hover:bg-opacity-30 mr-8"
